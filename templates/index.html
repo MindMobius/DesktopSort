@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Desktop Shortcuts</title>
+</head>
+<body>
+    <h1>Desktop Shortcuts</h1>
+    <ul>
+        {% for shortcut in shortcuts %}
+            <li>
+                <a href="#" onclick="openShortcut('{{ shortcut.name }}')">{{ shortcut.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        function openShortcut(shortcutName) {
+            fetch('/open_shortcut/' + shortcutName)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        console.log('Shortcut opened successfully');
+                    } else {
+                        alert('Error opening shortcut: ' + data.message);
+                    }
+                });
+        }
+    </script>
+</body>
+</html>
