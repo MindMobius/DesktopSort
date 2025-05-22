@@ -1,28 +1,312 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Desktop Shortcuts</title>
+    <title>Desktop Shortcuts Launcher</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            line-height: 1.6;
+            background-color: #f0f2f5; /* Light gray background */
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 960px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff; /* White background for content */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            font-size: 2em;
+            color: #2c3e50; /* Darker blue-gray */
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .shortcut-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px; /* Increased margin */
+            padding: 10px; /* Added padding */
+            border-radius: 6px;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .shortcut-item:hover {
+            background-color: #f9f9f9; /* Subtle hover effect */
+        }
+        .shortcut-icon {
+            width: 32px; /* Fixed width */
+            height: 32px; /* Fixed height */
+            margin-right: 15px; /* Increased margin */
+            border: 1px solid #eee; 
+            border-radius: 4px;
+            object-fit: contain; /* Ensures icon is scaled nicely */
+            flex-shrink: 0; /* Prevents icon from shrinking */
+        }
+        .shortcut-details {
+            display: flex;
+            flex-direction: column;
+        }
+        .shortcut-link {
+            text-decoration: none;
+            color: #007bff; /* Standard blue for links */
+            font-weight: bold; /* Make name stand out */
+            font-size: 1.1em;
+        }
+        .shortcut-link:hover, .shortcut-link:focus {
+            text-decoration: underline;
+            color: #0056b3; /* Darker blue on hover */
+        }
+        .shortcut-meta {
+            font-size: 0.85em;
+            color: #555; /* Slightly lighter text for meta info */
+            margin-top: 4px;
+        }
+        .shortcut-meta em { /* Italic parts like Path, Args, Desc */
+            font-style: normal; /* Overriding browser default for em if not desired */
+        }
+        .shortcut-meta .meta-label { /* For "Path:", "Args:", "Desc:" labels */
+            font-weight: 600;
+            color: #444;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+        #searchInput {
+            width: 100%; 
+            padding: 12px; /* Increased padding */
+            margin-bottom: 25px; /* Increased margin */
+            font-size: 1em; /* Relative font size */
+            border: 1px solid #ddd; /* Lighter border */
+            border-radius: 6px;
+            box-sizing: border-box; 
+        }
+        #searchInput:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+            outline: none;
+        }
+        .category-container {
+            margin-bottom: 30px; /* Increased margin between categories */
+        }
+        .category-container h2 {
+            font-size: 1.5em;
+            color: #34495e; /* Another shade of blue-gray */
+            margin-top: 0; /* Adjusted as it's first in container */
+            margin-bottom: 15px; /* Increased margin */
+            border-bottom: 2px solid #e0e0e0; /* Slightly thicker, lighter border */
+            padding-bottom: 8px; /* Increased padding */
+        }
+        .no-results {
+            color: #666; /* Adjusted color */
+            font-style: italic;
+            padding: 10px 0; /* Added padding */
+            text-align: center;
+        }
+        .category-container ul.shortcut-list { 
+            list-style-type: none; 
+            padding-left: 0; 
+        }
+        .status-message {
+            padding: 12px 15px; /* Adjusted padding */
+            margin-top: 0; /* Placed above search, so no top margin here */
+            margin-bottom: 20px; /* Space before search input */
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 500; /* Slightly less bold */
+            font-size: 0.95em;
+        }
+        .status-success {
+            background-color: #d1e7dd; /* Softer green */
+            color: #0f5132;
+            border: 1px solid #badbcc;
+        }
+        .status-error {
+            background-color: #f8d7da;
+            color: #842029; /* Darker red for better contrast */
+            border: 1px solid #f5c2c7;
+        }
+
+        /* Basic responsiveness for smaller screens */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            .category-container h2 {
+                font-size: 1.3em;
+            }
+            #searchInput {
+                font-size: 0.95em;
+            }
+            .shortcut-item {
+                padding: 8px;
+            }
+            .shortcut-link {
+                font-size: 1em;
+            }
+            .shortcut-meta {
+                font-size: 0.8em;
+            }
+        }
+
+    </style>
 </head>
 <body>
-    <h1>Desktop Shortcuts</h1>
-    <ul>
-        {% for shortcut in shortcuts %}
-            <li>
-                <a href="#" onclick="openShortcut('{{ shortcut.name }}')">{{ shortcut.name }}</a>
-            </li>
-        {% endfor %}
-    </ul>
+<div class="container">
+    <h1>Desktop Shortcuts Launcher</h1>
+    <div id="launchStatus" class="status-message hidden"></div> <!-- Feedback div -->
+    <input type="text" id="searchInput" placeholder="Search shortcuts by name, path, description, or category...">
+
+    <div id="shortcutsContainer">
+        {% if not categorized_shortcuts %}
+            <p class="no-results">No shortcuts found on the desktop.</p>
+        {% else %}
+            {% for category_group in categorized_shortcuts %}
+                <div class="category-container" data-category-name="{{ category_group.name|lower }}">
+                    <h2>{{ category_group.name }}</h2>
+                    {% if category_group.shortcuts %}
+                        <ul class="shortcut-list">
+                            {% for shortcut in category_group.shortcuts %}
+                                <li class="shortcut-item" 
+                                    data-name="{{ shortcut.name|lower }}" 
+                                    data-description="{{ shortcut.description|lower if shortcut.description else '' }}"
+                                    data-path="{{ shortcut.path|lower if shortcut.path else '' }}"
+                                    data-category="{{ category_group.name|lower }}">
+                                    
+                                    <img src="{{ shortcut.icon_base64 if shortcut.icon_base64 else 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABPSURBVFhH7c6xCQAgDAPBAL95/00jLsBQTLYgYARsCMLNEGwLgh0BWyGwLSR2FLZLYLMEz07bzRKeHbDMBC1sDtkswXOW9XwD2zYBSyDvHwAAAABJRU5ErkJggg==' }}" alt="{{ shortcut.name }} icon" class="shortcut-icon">
+                                    
+                                    <div class="shortcut-details">
+                                        <a href="#" onclick="openShortcut('{{ shortcut.name }}')" class="shortcut-link">{{ shortcut.name }}</a>
+                                        <div class="shortcut-meta">
+                                            <em><span class="meta-label">Path:</span> {{ shortcut.path }}</em>
+                                            {% if shortcut.arguments %} <em><span class="meta-label">Args:</span> {{ shortcut.arguments }}</em>{% endif %}
+                                            {% if shortcut.description %} <br><em><span class="meta-label">Desc:</span> {{ shortcut.description }}</em>{% endif %}
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="no-results">No shortcuts found in the "{{ category_group.name }}" category.</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <p id="noMatchesMessage" class="no-results hidden">No shortcuts match your search query.</p>
+        {% endif %}
+    </div>
+</div> <!-- End of .container -->
 
     <script>
+        // const categorizedShortcutsData = {{ categorized_shortcuts|tojson|safe }}; // Data embedding is optional
+
+        const searchInput = document.getElementById('searchInput');
+        const shortcutsContainer = document.getElementById('shortcutsContainer');
+        const noMatchesMessage = document.getElementById('noMatchesMessage');
+        
+        // Query for category containers and shortcut items only once if they are static after page load
+        const allCategoryContainers = shortcutsContainer.querySelectorAll('.category-container');
+        const allShortcutItems = shortcutsContainer.querySelectorAll('.shortcut-item');
+
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            let hasVisibleShortcutsOverall = false;
+
+            allCategoryContainers.forEach(categoryContainer => {
+                let hasVisibleShortcutsInCategory = false;
+                const categoryName = categoryContainer.dataset.categoryName; // Already lowercase from template
+                const shortcutsInCategory = categoryContainer.querySelectorAll('.shortcut-item');
+
+                shortcutsInCategory.forEach(item => {
+                    const name = item.dataset.name; // Already lowercase
+                    const description = item.dataset.description; // Already lowercase
+                    // const path = item.dataset.path; // Already lowercase, if needed for search
+
+                    const isMatch = name.includes(searchTerm) || 
+                                  description.includes(searchTerm) ||
+                                  categoryName.includes(searchTerm); // Search category name as well
+
+                    if (isMatch) {
+                        item.classList.remove('hidden');
+                        hasVisibleShortcutsInCategory = true;
+                        hasVisibleShortcutsOverall = true;
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+
+                if (hasVisibleShortcutsInCategory) {
+                    categoryContainer.classList.remove('hidden');
+                } else {
+                    categoryContainer.classList.add('hidden');
+                }
+            });
+            
+            if (searchTerm === "") { // If search is cleared
+                noMatchesMessage.classList.add('hidden');
+                allCategoryContainers.forEach(cc => cc.classList.remove('hidden'));
+                allShortcutItems.forEach(si => si.classList.remove('hidden'));
+                hasVisibleShortcutsOverall = true; // Ensure message doesn't show when cleared
+            } else if (hasVisibleShortcutsOverall) {
+                noMatchesMessage.classList.add('hidden');
+            } else {
+                noMatchesMessage.classList.remove('hidden');
+            }
+        });
+
+        const launchStatusDiv = document.getElementById('launchStatus');
+        let statusTimeout; // To clear previous timeout if a new message comes quickly
+
+        function showLaunchStatus(message, isSuccess) {
+            clearTimeout(statusTimeout); // Clear any existing timeout
+
+            launchStatusDiv.textContent = message;
+            launchStatusDiv.className = 'status-message'; // Reset classes
+            if (isSuccess) {
+                launchStatusDiv.classList.add('status-success');
+            } else {
+                launchStatusDiv.classList.add('status-error');
+            }
+            launchStatusDiv.classList.remove('hidden');
+
+            // Hide the message after some time (e.g., 5 seconds for errors, 3 for success)
+            const duration = isSuccess ? 3000 : 5000;
+            statusTimeout = setTimeout(() => {
+                launchStatusDiv.classList.add('hidden');
+            }, duration);
+        }
+
         function openShortcut(shortcutName) {
             fetch('/open_shortcut/' + shortcutName)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        // Try to parse error response, but fallback if not JSON
+                        return response.json().catch(() => ({ status: "error", message: `HTTP error ${response.status}` }));
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.status === 'success') {
-                        console.log('Shortcut opened successfully');
+                        showLaunchStatus(data.message || `Successfully launched ${shortcutName}`, true);
+                        console.log('Shortcut opened successfully:', data.message);
                     } else {
-                        alert('Error opening shortcut: ' + data.message);
+                        showLaunchStatus(data.message || `Error opening shortcut ${shortcutName}`, false);
+                        console.error('Error opening shortcut:', data.message);
                     }
+                })
+                .catch(error => {
+                    // Network errors or other issues with fetch itself
+                    showLaunchStatus(`Network or client-side error: ${error.toString()}`, false);
+                    console.error('Fetch error:', error);
                 });
         }
     </script>
