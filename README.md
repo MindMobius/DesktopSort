@@ -1,36 +1,36 @@
-# Desktop Shortcuts Web Launcher
+# 桌面快捷方式 Web 启动器
 
 ## 简介
 
-**Desktop Shortcuts Web Launcher** is an enhanced Python (Flask) web application that provides a modern, user-friendly interface to display, categorize, search, and launch your Windows desktop shortcuts directly from a web browser. It intelligently extracts shortcut icons, classifies applications, and offers a responsive design for easy access on various devices.
+**桌面快捷方式 Web 启动器** 是一个增强的 Python (Flask) Web 应用程序，提供了一个现代化的、用户友好的界面，可以直接从 Web 浏览器显示、分类、搜索和启动你的 Windows 桌面快捷方式。它智能地提取快捷方式图标，对应用程序进行分类，并提供响应式设计，以便在各种设备上轻松访问。
 
-This application is designed for local use on a Windows machine where the desktop shortcuts reside.
+此应用程序设计用于桌面快捷方式所在的 Windows 机器上的本地使用。
 
-## Features
+## 特性
 
-*   **Display Desktop Shortcuts:** Lists all valid shortcuts from your Windows desktop.
-*   **Launch Applications:** Click any shortcut in the web interface to open the corresponding application on your machine.
-*   **Icon Extraction & Display:** Automatically extracts and displays the actual icon for each shortcut. A default placeholder icon is shown if an icon cannot be retrieved.
-*   **AI-Powered Categorization:** Shortcuts are intelligently classified into categories (e.g., "Productivity," "Development," "Web Browsers," "Games") based on keywords found in their name, path, and description. Uncategorized items fall into an "Other" category.
-*   **Live Search/Filter:** Instantly search and filter shortcuts by name, path, description, or category directly from the web interface.
-*   **Detailed Information:** Displays the shortcut's name, target path, command-line arguments, and description.
-*   **Modern & Responsive UI:** Features a clean, updated user interface with improved layout, fonts, and colors, ensuring good usability across different screen sizes.
-*   **Enhanced Launch Feedback:** Provides clear, non-intrusive status messages (success or error) when attempting to launch an application.
+*   **显示桌面快捷方式：** 列出 Windows 桌面上的所有有效快捷方式。
+*   **启动应用程序：** 单击 Web 界面中的任何快捷方式以在你的机器上打开相应的应用程序。
+*   **图标提取和显示：** 自动提取并显示每个快捷方式的实际图标。如果无法检索图标，则显示默认占位符图标。
+*   **AI 驱动的分类：** 快捷方式根据其名称、路径和描述中的关键字智能地分类到各个类别（例如，“效率”、“开发”、“Web 浏览器”、“游戏”）。未分类的项目归入“其他”类别。
+*   **实时搜索/过滤器：** 直接从 Web 界面按名称、路径、描述或类别即时搜索和过滤快捷方式。
+*   **详细信息：** 显示快捷方式的名称、目标路径、命令行参数和描述。
+*   **现代和响应式 UI：** 具有干净、更新的用户界面，具有改进的布局、字体和颜色，确保在不同屏幕尺寸上的良好可用性。
+*   **增强的启动反馈：** 在尝试启动应用程序时提供清晰、非侵入性的状态消息（成功或错误）。
 
-## Technology Stack
+## 技术栈
 
-*   **Backend:**
+*   **后端：**
     *   Python 3
-    *   Flask (Web Framework)
-    *   `winshell` (for reading shortcut information)
-    *   `pywin32` (for accessing Windows API, especially for icon extraction)
-    *   `Pillow` (Python Imaging Library - for processing extracted icons)
-*   **Frontend:**
+    *   Flask（Web 框架）
+    *   `winshell`（用于读取快捷方式信息）
+    *   `pywin32`（用于访问 Windows API，特别是用于图标提取）
+    *   `Pillow`（Python 图像库 - 用于处理提取的图标）
+*   **前端：**
     *   HTML5
     *   CSS3
-    *   Vanilla JavaScript (for search and dynamic interactions)
+    *   Vanilla JavaScript（用于搜索和动态交互）
 
-## Dependencies
+## 依赖项
 
 *   Python 3
 *   Flask
@@ -38,57 +38,50 @@ This application is designed for local use on a Windows machine where the deskto
 *   `pywin32`
 *   `Pillow`
 
-## Installation
+## 安装
 
-1.  **Prerequisites:**
-    *   Ensure you have Python 3 installed on your Windows machine.
-    *   It's recommended to use a virtual environment for Python projects.
+1.  **准备工作：**
+    *   确保你的 Windows 机器上安装了 Python 3。
+    *   建议为 Python 项目使用虚拟环境。
 
-2.  **Install Python Dependencies:**
-    Open a command prompt or PowerShell and run:
+2.  **安装 Python 依赖项：**
+    打开命令提示符或 PowerShell 并运行：
     ```bash
     pip install flask winshell pywin32 Pillow
     ```
 
-## Usage
+## 使用
 
-1.  **Run the Application:**
-    Navigate to the project directory in your command prompt or PowerShell and execute:
+1.  **运行应用程序：**
+    在命令提示符或 PowerShell 中导航到项目目录并执行：
     ```bash
     python app.py
     ```
 
-2.  **Access in Browser:**
-    Open your web browser and go to `http://127.0.0.1:5000/`.
+2.  **在浏览器中访问：**
+    打开你的 Web 浏览器并转到 `http://127.0.0.1:5000/`。
 
-3.  **Using the Features:**
-    *   **Browse:** Shortcuts are listed, grouped by their automatically assigned category.
-    *   **Launch:** Click on a shortcut's name to launch it. You'll see a status message at the top indicating success or failure.
-    *   **Search:** Use the search bar at the top to type keywords. The list will update dynamically to show matching shortcuts based on their name, path, description, or category.
-    *   **View Details:** Each shortcut entry displays its icon, name, target path, arguments (if any), and description.
+3.  **使用功能：**
+    *   **浏览：** 快捷方式按其自动分配的类别分组列出。
+    *   **启动：** 单击快捷方式的名称以启动它。你将在顶部看到一条状态消息，指示成功或失败。
+    *   **搜索：** 使用顶部的搜索栏键入关键字。列表将动态更新，以显示与其名称、路径、描述或类别匹配的快捷方式。
+    *   **查看详细信息：** 每个快捷方式条目显示其图标、名称、目标路径、参数（如果有）和描述。
 
-## Code Structure
+## 代码结构
 
-*   `app.py`: The main Python Flask application file. It handles shortcut discovery, icon extraction, classification, and serves the web interface.
-*   `templates/index.html`: The single HTML file that renders the web interface using Jinja templating. It includes all necessary CSS and JavaScript for the frontend.
+*   `app.py`：主要的 Python Flask 应用程序文件。它处理快捷方式发现、图标提取、分类，并提供 Web 界面。
+*   `templates/index.html`：单个 HTML 文件，使用 Jinja 模板呈现 Web 界面。它包括前端所需的所有 CSS 和 JavaScript。
 
-## Screenshots
+## 截图
 
-*[Consider adding a screenshot of the new UI here to showcase the categorized view, icons, and search bar.]*
+*[考虑在此处添加新 UI 的屏幕截图，以展示分类视图、图标和搜索栏。]*
 
-## Future Enhancements (Ideas)
+## 未来增强（想法）
 
-*   Customizable categories.
-*   Drag-and-drop reordering.
-*   User authentication for remote access (with security considerations).
+*   可自定义的类别。
+*   拖放重新排序。
+*   用于远程访问的用户身份验证（具有安全考虑）。
 
-## Contributing
+## 贡献
 
-Contributions, issues, and feature requests are welcome! Please feel free to fork the repository and submit a pull request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details (if one exists, otherwise specify).
----
-
-This README aims to be a comprehensive guide for users and developers interacting with the application.
+欢迎贡献、问题和功能请求！请随时 Fork 存储库并提交 Pull Request。
