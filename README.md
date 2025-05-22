@@ -1,51 +1,94 @@
-# 桌面快捷方式 Web 应用
+# Desktop Shortcuts Web Launcher
 
 ## 简介
 
-这是一个使用 Python (Flask) 开发的 Web 应用，用于在网页上展示和打开 Windows 桌面上的快捷方式。
+**Desktop Shortcuts Web Launcher** is an enhanced Python (Flask) web application that provides a modern, user-friendly interface to display, categorize, search, and launch your Windows desktop shortcuts directly from a web browser. It intelligently extracts shortcut icons, classifies applications, and offers a responsive design for easy access on various devices.
 
-## 功能
+This application is designed for local use on a Windows machine where the desktop shortcuts reside.
 
-*   **展示桌面快捷方式：**  在网页上列出桌面上的所有快捷方式。
-*   **打开快捷方式：**  点击网页上的快捷方式，即可打开对应的应用程序。
+## Features
 
-## 技术栈
+*   **Display Desktop Shortcuts:** Lists all valid shortcuts from your Windows desktop.
+*   **Launch Applications:** Click any shortcut in the web interface to open the corresponding application on your machine.
+*   **Icon Extraction & Display:** Automatically extracts and displays the actual icon for each shortcut. A default placeholder icon is shown if an icon cannot be retrieved.
+*   **AI-Powered Categorization:** Shortcuts are intelligently classified into categories (e.g., "Productivity," "Development," "Web Browsers," "Games") based on keywords found in their name, path, and description. Uncategorized items fall into an "Other" category.
+*   **Live Search/Filter:** Instantly search and filter shortcuts by name, path, description, or category directly from the web interface.
+*   **Detailed Information:** Displays the shortcut's name, target path, command-line arguments, and description.
+*   **Modern & Responsive UI:** Features a clean, updated user interface with improved layout, fonts, and colors, ensuring good usability across different screen sizes.
+*   **Enhanced Launch Feedback:** Provides clear, non-intrusive status messages (success or error) when attempting to launch an application.
 
-*   **后端：**
+## Technology Stack
+
+*   **Backend:**
     *   Python 3
-    *   Flask (Web 框架)
-    *   `pywin32` (用于访问 Windows API)
-    *   `winshell` (用于读取快捷方式信息)
-*   **前端：**
-    *   HTML
-    *   JavaScript
+    *   Flask (Web Framework)
+    *   `winshell` (for reading shortcut information)
+    *   `pywin32` (for accessing Windows API, especially for icon extraction)
+    *   `Pillow` (Python Imaging Library - for processing extracted icons)
+*   **Frontend:**
+    *   HTML5
+    *   CSS3
+    *   Vanilla JavaScript (for search and dynamic interactions)
 
-## 依赖
+## Dependencies
 
 *   Python 3
 *   Flask
-*   `pywin32`
 *   `winshell`
+*   `pywin32`
+*   `Pillow`
 
-## 安装
+## Installation
 
-1.  **安装 Python 依赖：**
+1.  **Prerequisites:**
+    *   Ensure you have Python 3 installed on your Windows machine.
+    *   It's recommended to use a virtual environment for Python projects.
 
+2.  **Install Python Dependencies:**
+    Open a command prompt or PowerShell and run:
     ```bash
-    pip install flask pywin32 winshell
+    pip install flask winshell pywin32 Pillow
     ```
 
-## 使用方法
+## Usage
 
-1.  **运行 `app.py`：**
-
+1.  **Run the Application:**
+    Navigate to the project directory in your command prompt or PowerShell and execute:
     ```bash
     python app.py
     ```
 
-2.  **在浏览器中打开 `http://127.0.0.1:5000/`。**
+2.  **Access in Browser:**
+    Open your web browser and go to `http://127.0.0.1:5000/`.
 
-## 代码结构
+3.  **Using the Features:**
+    *   **Browse:** Shortcuts are listed, grouped by their automatically assigned category.
+    *   **Launch:** Click on a shortcut's name to launch it. You'll see a status message at the top indicating success or failure.
+    *   **Search:** Use the search bar at the top to type keywords. The list will update dynamically to show matching shortcuts based on their name, path, description, or category.
+    *   **View Details:** Each shortcut entry displays its icon, name, target path, arguments (if any), and description.
 
-*   `app.py`：Python 后端代码，包含 Flask 应用的路由和逻辑。
-*   `templates/index.html`：HTML 前端代码，用于展示快捷方式列表。
+## Code Structure
+
+*   `app.py`: The main Python Flask application file. It handles shortcut discovery, icon extraction, classification, and serves the web interface.
+*   `templates/index.html`: The single HTML file that renders the web interface using Jinja templating. It includes all necessary CSS and JavaScript for the frontend.
+
+## Screenshots
+
+*[Consider adding a screenshot of the new UI here to showcase the categorized view, icons, and search bar.]*
+
+## Future Enhancements (Ideas)
+
+*   Customizable categories.
+*   Drag-and-drop reordering.
+*   User authentication for remote access (with security considerations).
+
+## Contributing
+
+Contributions, issues, and feature requests are welcome! Please feel free to fork the repository and submit a pull request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details (if one exists, otherwise specify).
+---
+
+This README aims to be a comprehensive guide for users and developers interacting with the application.
