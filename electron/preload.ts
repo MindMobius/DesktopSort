@@ -1,33 +1,30 @@
-import { ipcRenderer, contextBridge } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 
-// --------- Expose some API to the Renderer process ---------
-contextBridge.exposeInMainWorld('ipcRenderer', {
-  on(...args: Parameters<typeof ipcRenderer.on>) {
-    const [channel, listener] = args
-    return ipcRenderer.on(channel, (event, ...args) => listener(event, ...args))
-  },
-  off(...args: Parameters<typeof ipcRenderer.off>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.off(channel, ...omit)
-  },
-  send(...args: Parameters<typeof ipcRenderer.send>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.send(channel, ...omit)
-  },
-  invoke(...args: Parameters<typeof ipcRenderer.invoke>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.invoke(channel, ...omit)
-  },
-})
-
-// 暴露应用相关API
+// 暴露 ipcRenderer 给渲染进程
 contextBridge.exposeInMainWorld('desktopSort', {
+  ipcRenderer: {
+    on: (channel: string, callback: Function) => {
+      ipcRenderer.on(channel, (_, ...args) => callback(...args))
+    },
+    off: (channel: string, callback: Function) => {
+      ipcRenderer.removeListener(channel, callback as any)
+    },
+    send: (channel: string, ...args: any[]) => {
+      ipcRenderer.send(channel, ...args)
+    },
+    invoke: (channel: string, ...args: any[]) => {
+      return ipcRenderer.invoke(channel, ...args)
+    }
+  },
   scanDesktop: () => ipcRenderer.invoke('scan-desktop'),
   classifyApps: () => ipcRenderer.invoke('classify-apps'),
   getApps: () => ipcRenderer.invoke('get-apps'),
   getCategories: () => ipcRenderer.invoke('get-categories'),
-  openApp: (appPath: string) => ipcRenderer.invoke('open-app', appPath),
+  openApp: (path: string) => ipcRenderer.invoke('open-app', path),
   saveConfig: () => ipcRenderer.invoke('save-config'),
   resetConfig: () => ipcRenderer.invoke('reset-config'),
   getClassificationStatus: () => ipcRenderer.invoke('get-classification-status'),
+  minimizeWindow: () => ipcRenderer.send('minimize-window'),
+  maximizeWindow: () => ipcRenderer.send('maximize-window'),
+  closeWindow: () => ipcRenderer.send('close-window'),
 })

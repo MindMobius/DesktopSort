@@ -132,43 +132,79 @@ const loadSavedData = async () => {
 onMounted(() => {
   loadSavedData();
 });
+
+// 添加窗口控制功能
+const minimizeWindow = () => {
+  window.desktopSort.ipcRenderer.send('minimize-window');
+};
+
+const maximizeWindow = () => {
+  window.desktopSort.ipcRenderer.send('maximize-window');
+};
+
+const closeWindow = () => {
+  window.desktopSort.ipcRenderer.send('close-window');
+};
 </script>
 
 <template>
   <div class="app-container">
-    <header class="app-header">
-      <h1>DesktopSort</h1>
-      <p>面向懒人的Windows应用启动器</p>
-      
-      <div class="controls">
-        <button @click="scanDesktop" :disabled="loading">扫描桌面</button>
-        <button @click="classifyApps" :disabled="loading || apps.length === 0">AI分类</button>
-        <button @click="resetConfig" :disabled="loading">重置配置</button>
+    <!-- 自定义窗口控制栏 -->
+    <div class="window-controls">
+      <div class="drag-area"></div>
+      <div class="window-buttons">
+        <button class="window-button minimize" @click="minimizeWindow">—</button>
+        <button class="window-button maximize" @click="maximizeWindow">□</button>
+        <button class="window-button close" @click="closeWindow">×</button>
       </div>
-      
-      <p v-if="message" class="message">{{ message }}</p>
-      <div v-if="classifyingStatus" class="status-indicator">
-        <div class="spinner"></div>
-        <p>AI正在思考中，请稍候...</p>
-      </div>
-    </header>
+    </div>
     
-    <main class="app-content">
-      <div v-if="loading" class="loading">加载中...</div>
-      
-      <div v-else-if="categorizedApps.length === 0" class="empty-state">
-        <p>没有应用数据，请点击"扫描桌面"按钮</p>
+    <div class="app-content">
+      <!-- 控制区域 -->
+      <div class="controls-area">
+        <h1>DesktopSort</h1>
+        <p>面向懒人的Windows应用启动器</p>
+        
+        <div class="controls">
+          <button @click="scanDesktop" :disabled="loading" class="action-button">
+            <span class="icon">📂</span>
+            <span>扫描桌面</span>
+          </button>
+          <button @click="classifyApps" :disabled="loading || apps.length === 0" class="action-button">
+            <span class="icon">🤖</span>
+            <span>AI分类</span>
+          </button>
+          <button @click="resetConfig" :disabled="loading" class="action-button">
+            <span class="icon">🔄</span>
+            <span>重置配置</span>
+          </button>
+        </div>
+        
+        <p v-if="message" class="message">{{ message }}</p>
+        <div v-if="classifyingStatus" class="status-indicator">
+          <div class="spinner"></div>
+          <p>AI正在思考中，请稍候...</p>
+        </div>
       </div>
       
-      <div v-else class="folders-grid">
-        <AppFolder 
-          v-for="category in categorizedApps" 
-          :key="category.name"
-          :category="category.name"
-          :apps="category.apps"
-        />
-      </div>
-    </main>
+      <!-- 主内容区域 -->
+      <main class="main-content">
+        <div v-if="loading" class="loading">加载中...</div>
+        
+        <div v-else-if="categorizedApps.length === 0" class="empty-state">
+          <p>没有应用数据，请点击"扫描桌面"按钮</p>
+        </div>
+        
+        <div v-else class="folders-grid">
+          <AppFolder 
+            v-for="category in categorizedApps" 
+            :key="category.name"
+            :category="category.name"
+            :apps="category.apps"
+          />
+        </div>
+      </main>
+    </div>
     
     <ShortcutTips />
   </div>
@@ -183,98 +219,175 @@ onMounted(() => {
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f0f2f5;
+  background-color: transparent;
   color: #333;
+  overflow: hidden;
+  height: 100vh;
+}
+
+:root {
+  --primary-color: #4285f4;
+  --primary-dark: #3367d6;
+  --text-color: #333;
+  --text-light: #666;
+  --bg-color: rgba(240, 242, 245, 0.9);
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --border-radius: 12px;
 }
 </style>
 
 <style scoped>
 .app-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-color);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.app-header {
+/* 窗口控制栏 */
+.window-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 32px;
+  -webkit-app-region: drag; /* 使整个区域可拖动 */
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+.drag-area {
+  flex: 1;
+  height: 100%;
+}
+
+.window-buttons {
+  display: flex;
+  -webkit-app-region: no-drag; /* 按钮区域不可拖动 */
+}
+
+.window-button {
+  width: 46px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.window-button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.window-button.close:hover {
+  background-color: #e81123;
+  color: white;
+}
+
+/* 应用内容区域 */
+.app-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px 20px;
+  overflow: hidden;
+}
+
+.controls-area {
   text-align: center;
-  margin-bottom: 30px;
+  padding: 20px 0;
 }
 
-.app-header h1 {
+.controls-area h1 {
   font-size: 2.5rem;
   margin-bottom: 10px;
-  color: #4285f4;
+  color: var(--primary-color);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.app-header p {
-  color: #666;
+.controls-area p {
+  color: var(--text-light);
   margin-bottom: 20px;
 }
 
 .controls {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 15px;
   margin-bottom: 20px;
 }
 
-button {
-  background-color: #4285f4;
+.action-button {
+  background-color: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 5px;
-  padding: 10px 15px;
+  border-radius: var(--border-radius);
+  padding: 10px 20px;
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.3s;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow);
 }
 
-button:hover {
-  background-color: #3367d6;
+.action-button:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
 }
 
-button:disabled {
+.action-button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.icon {
+  font-size: 18px;
 }
 
 .message {
-  color: #4285f4;
+  color: var(--primary-color);
   margin-top: 10px;
   font-weight: bold;
 }
 
-.app-content {
-  min-height: 500px;
+/* 主内容区域 */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  border-radius: var(--border-radius);
+  background-color: var(--card-bg);
+  box-shadow: var(--shadow);
 }
 
-.loading {
+.loading, .empty-state {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 300px;
+  height: 100%;
   font-size: 18px;
-  color: #666;
-}
-
-.empty-state {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 300px;
-  font-size: 18px;
-  color: #666;
+  color: var(--text-light);
   text-align: center;
 }
 
+/* 文件夹网格 */
 .folders-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 20px;
-  padding: 20px 0;
+  padding: 20px;
 }
-</style>
 
+/* 状态指示器 */
 .status-indicator {
   display: flex;
   align-items: center;
@@ -288,10 +401,29 @@ button:disabled {
   height: 20px;
   border: 3px solid rgba(66, 133, 244, 0.3);
   border-radius: 50%;
-  border-top-color: #4285f4;
+  border-top-color: var(--primary-color);
   animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+</style>

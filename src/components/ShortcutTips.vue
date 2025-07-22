@@ -51,14 +51,20 @@ const toggleTips = () => {
 }
 
 .tips-toggle {
-  background-color: #4285f4;
+  background-color: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   padding: 8px 12px;
   cursor: pointer;
   font-size: 14px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow);
+  transition: all 0.3s;
+}
+
+.tips-toggle:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
 }
 
 .tips-panel {
@@ -66,17 +72,20 @@ const toggleTips = () => {
   bottom: 40px;
   right: 0;
   width: 300px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
   padding: 15px;
+  backdrop-filter: blur(10px);
 }
 
 .tips-panel h3 {
   margin-top: 0;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   font-size: 16px;
-  color: #333;
+  color: var(--primary-color);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 8px;
 }
 
 .tips-panel ul {
@@ -89,7 +98,7 @@ const toggleTips = () => {
   display: flex;
   justify-content: space-between;
   padding: 8px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .tips-panel li:last-child {
@@ -98,13 +107,14 @@ const toggleTips = () => {
 
 .key {
   background-color: #f1f1f1;
-  padding: 2px 6px;
+  padding: 3px 8px;
   border-radius: 4px;
   font-family: monospace;
   font-weight: bold;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .description {
-  color: #666;
+  color: var(--text-light);
 }
 </style>

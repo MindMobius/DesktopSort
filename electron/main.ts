@@ -44,6 +44,10 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
     },
+    // 添加以下配置实现沉浸式体验
+    frame: false,  // 移除窗口边框
+    transparent: true, // 支持透明背景
+    titleBarStyle: 'hidden', // 隐藏标题栏
   })
 
   // Test active push message to Renderer-process.
@@ -123,6 +127,25 @@ function setupIPC() {
   // 获取AI分类状态
   ipcMain.handle('get-classification-status', () => {
     return aiClassifier.isInProgress();
+  });
+
+  // 添加窗口控制功能
+  ipcMain.on('minimize-window', () => {
+    if (win) win.minimize();
+  });
+  
+  ipcMain.on('maximize-window', () => {
+    if (win) {
+      if (win.isMaximized()) {
+        win.unmaximize();
+      } else {
+        win.maximize();
+      }
+    }
+  });
+  
+  ipcMain.on('close-window', () => {
+    if (win) win.close();
   });
 }
 

@@ -23,6 +23,12 @@ declare global {
       saveConfig: () => Promise<boolean>;
       resetConfig: () => Promise<boolean>;
       getClassificationStatus: () => Promise<boolean>;
+      ipcRenderer: {
+        on: (channel: string, callback: Function) => void;
+        off: (channel: string, callback: Function) => void;
+        send: (channel: string, ...args: any[]) => void;
+        invoke: (channel: string, ...args: any[]) => Promise<any>;
+      };
     };
   }
 }

@@ -71,29 +71,31 @@ const toggleFolder = () => {
 }
 
 .folder-icon {
-  width: 80px;
-  height: 80px;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 15px;
+  width: 100px;
+  height: 100px;
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s;
+  box-shadow: var(--shadow);
 }
 
 .folder-icon:hover {
-  background-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
 .folder-preview {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 2px;
-  width: 60px;
-  height: 60px;
+  gap: 4px;
+  width: 70px;
+  height: 70px;
 }
 
 .preview-item {
@@ -103,13 +105,14 @@ const toggleFolder = () => {
 }
 
 .folder-name {
-  margin-top: 5px;
-  font-size: 12px;
+  margin-top: 8px;
+  font-size: 14px;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 80px;
+  max-width: 100px;
+  font-weight: 500;
 }
 
 .folder-content {
@@ -117,25 +120,31 @@ const toggleFolder = () => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 80%;
-  max-width: 800px;
-  height: 80%;
-  max-height: 600px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 900px;
+  height: 85%;
+  max-height: 700px;
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  backdrop-filter: blur(15px);
 }
 
 .folder-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
-  border-bottom: 1px solid #eee;
+  padding: 15px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.folder-header h3 {
+  font-size: 18px;
+  color: var(--primary-color);
 }
 
 .close-btn {
@@ -143,12 +152,24 @@ const toggleFolder = () => {
   border: none;
   font-size: 24px;
   cursor: pointer;
-  color: #666;
+  color: var(--text-light);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: var(--text-color);
 }
 
 .apps-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 20px;
   padding: 20px;
   overflow-y: auto;
@@ -160,41 +181,47 @@ const toggleFolder = () => {
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: all 0.2s;
+  padding: 10px;
+  border-radius: var(--border-radius);
 }
 
 .app-item:hover {
+  background-color: rgba(255, 255, 255, 0.5);
   transform: scale(1.05);
 }
 
 .app-icon {
   width: 50px;
   height: 50px;
-  background-color: #4285f4;
+  background-color: var(--primary-color);
   color: white;
-  border-radius: 10px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
   font-weight: bold;
   transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .app-name {
-  margin-top: 5px;
-  font-size: 12px;
+  margin-top: 8px;
+  font-size: 13px;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 80px;
+  max-width: 90px;
+  color: var(--text-color);
 }
 
 .app-icon-img {
-  border-radius: 10px;
+  border-radius: 12px;
   object-fit: contain;
   background-color: rgba(255, 255, 255, 0.1);
   padding: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 </style>
